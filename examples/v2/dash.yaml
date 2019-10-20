@@ -4,4 +4,4 @@ openshift_cluster_content:
 - object: Default Resources
   content:
   - name: Raw Manifests
-    file: simple/
+    file: manifests/

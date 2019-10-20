@@ -1,0 +1,7 @@
+version: 2.0
+
+openshift_cluster_content:
+- object: Default Resources
+  content:
+  - name: Raw Manifests
+    file: simple/

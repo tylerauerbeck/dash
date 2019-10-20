@@ -11,24 +11,74 @@ import (
 	cp "github.com/redhat-cop/dash/pkg/copy"
 )
 
+// Process is used to process an inventory found at the provided inventory path/dash.yaml
 func (i *Inventory) Process(ns *string) error {
 
 	if i.Namespace != "" {
 		ns = &i.Namespace
 	}
 
-	if i.ResourceGroups != nil {
-		for _, rg := range i.ResourceGroups {
-			err := rg.ProcessResourceGroup(i.Prefix, ns)
+	log.Println("Namespace is " + *ns)
+
+	if i.Version == 0 {
+		log.Println("Unable to determine version. Defaulting to v2...")
+		i.Version = 2
+	}
+
+	switch i.Version {
+	case 3:
+		if i.ResourceGroups != nil {
+			for _, rg := range i.ResourceGroups {
+				err := rg.ProcessResourceGroup(i.Prefix, ns)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	case 2:
+		if i.ClusterContentList != nil {
+			for _, occ := range i.ClusterContentList {
+				err := occ.ProcessClusterContentObject(i.Prefix, ns)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	default:
+		log.Fatalln("Unable to determine version. Exiting...")
+		os.Exit(1)
+	}
+
+	return nil
+}
+
+// ProcessClusterContentObject is used to process a v2 format inventory
+func (cco *ClusterContentObject) ProcessClusterContentObject(prefix string, ns *string) error {
+
+	file, err := ioutil.TempDir("", "dash")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.RemoveAll(file)
+
+	if cco.Content != nil {
+		for _, c := range cco.Content {
+			err := c.ProcessContent(ns, file, prefix)
 			if err != nil {
 				return err
 			}
 		}
 	}
 
+	err = Reconcile(file, ns)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
+// ProcessResourceGroup is used to process a v3 format inventory
 func (rg *ResourceGroup) ProcessResourceGroup(prefix string, ns *string) error {
 
 	if rg.Namespace != "" {
@@ -58,6 +108,32 @@ func (rg *ResourceGroup) ProcessResourceGroup(prefix string, ns *string) error {
 	return nil
 }
 
+// ProcessContent is used to process a single item within a v2 format inventory by converting that item into a v3 format
+func (c *ClusterContent) ProcessContent(ns *string, f string, p string) error {
+	var CTR Resource
+
+	if c.Namespace != "" {
+		ns = &c.Namespace
+	}
+
+	log.Println("Resource: " + c.Name + ", Namespace: " + *ns)
+
+	// Converts a v2 ClusterContent to a v3 Resource
+	// TODO: Convert Template once it has been added to Resource
+	CTR.Name = c.Name
+	CTR.Namespace = *ns
+	CTR.File = c.File
+
+	if CTR.File != "" {
+		err := CTR.ProcessFile(ns, f, p)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// ProcessResource is used to process a single item within a v3 format inventory
 func (r *Resource) ProcessResource(ns *string, f string, p string) error {
 
 	if r.Namespace != "" {

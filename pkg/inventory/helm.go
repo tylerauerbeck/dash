@@ -15,7 +15,7 @@ import (
 // HelmChart manages pulling and processing of Helm charts
 type HelmChart struct {
 	Chart      string      `yaml:"chart"`
-	Url        string      `yaml:"url"`
+	URL        string      `yaml:"url"`
 	Values     interface{} `yaml:"values"`
 	ValueFiles []string    `yaml:"valueFiles"`
 }
@@ -52,26 +52,26 @@ func (h *HelmChart) Process(ns *string, r *Resource) error {
 	log.Printf("%s\n", stdoutStderr)
 
 	// ensure output directory exists
-	output_dir := output + "/" + string(r.Action)
-	if _, err := os.Stat(output_dir); os.IsNotExist(err) {
-		os.Mkdir(output_dir, os.ModePerm)
+	outputDir := output + "/" + string(r.Action)
+	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
+		os.Mkdir(outputDir, os.ModePerm)
 	}
 
 	// helm template --output-dir './redis-final' './redis' --set
 	// base arguments to `helm template`
-	cmdArgs = []string{"template", "--output-dir", output_dir, output + "/charts/" + chart}
+	cmdArgs = []string{"template", "--output-dir", outputDir, output + "/charts/" + chart}
 	// generate flags for valueFiles
 	for _, f := range h.ValueFiles {
 		cmdArgs = append(cmdArgs, "-f", prefix+"/"+f)
 	}
 	// write embedded values to file and pass as arg
 	if h.Values != nil {
-		v_out := output + "/charts/" + chart + "/dash_values.yaml"
-		err = marshalValues(h.Values, v_out)
+		vOut := output + "/charts/" + chart + "/dash_values.yaml"
+		err = marshalValues(h.Values, vOut)
 		if err != nil {
 			return err
 		}
-		cmdArgs = append(cmdArgs, "-f", v_out)
+		cmdArgs = append(cmdArgs, "-f", vOut)
 	}
 
 	// execute helm command and handle output

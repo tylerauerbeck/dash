@@ -19,10 +19,6 @@ UPLOAD_CMD = github-release upload -u $(USER) -r $(EXECUTABLE) -t $(LAST_TAG) -n
 
 all: $(EXECUTABLE)
 
-# the executable used to perform the upload, dogfooding and all...
-bin/tmp/$(EXECUTABLE):
-	go build -o "$@"
-
 # arm
 bin/linux/arm/5/$(EXECUTABLE):
 	GOARM=5 GOARCH=arm GOOS=linux go build -o "$@"
@@ -56,7 +52,7 @@ bin/windows/amd64/$(EXECUTABLE).exe:
 
 # git tag -a v$(RELEASE) -m 'release $(RELEASE)'
 release: clean
-	$(MAKE) bin/tmp/$(EXECUTABLE) $(COMPRESSED_EXECUTABLE_TARGETS)
+	$(MAKE) $(COMPRESSED_EXECUTABLE_TARGETS)
 	git push && git push --tags
 	git log --format=%B $(LAST_TAG) -1 | \
 		github-release release -u $(USER) -r $(EXECUTABLE) \
@@ -80,4 +76,7 @@ clean:
 	rm $(EXECUTABLE) || true
 	rm -rf bin/
 
-.PHONY: clean release dep install
+test: clean dep
+	go test ./...
+
+.PHONY: clean release dep install test

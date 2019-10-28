@@ -67,7 +67,7 @@ release: clean
 # go get -u ./...
 # go test -i ./
 dep:
-	go list -f '{{join .Deps "\n"}}' | xargs go list -e -f '{{if not .Standard}}{{.ImportPath}}{{end}}' | xargs go get -u
+	go mod vendor
 
 $(EXECUTABLE): dep
 	go build -o "$@"

@@ -7,6 +7,23 @@ In general, the requirements to contribute to this project are as follows:
 - A [Go 1.12](https://golang.org/dl/) enviornment
 - A kubernetes cluster like [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 
+## Build Binary
+
+The default target in the makefile will build the project binary in the local directory. From there you can manually test it.
+
+```
+$ make
+
+$ ./dash -h
+Usage of ./dash:
+  -i string
+    	Path to Inventory, relative or absolute (shorthand) (default "./")
+  -inventory string
+    	Path to Inventory, relative or absolute (default "./")
+  -version
+    	See version
+```
+
 ## Running Tests
 
 There is some automated test coverage in the libraries. You can run all tests with:

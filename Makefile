@@ -1,4 +1,4 @@
-LAST_TAG := $(shell git describe --abbrev=0 --tags)
+LAST_TAG := $(shell git describe --abbrev=0 --tags 2>/dev/null || git rev-parse --short HEAD)
 
 USER := redhat-cop
 EXECUTABLE := dash
@@ -17,31 +17,33 @@ COMPRESSED_EXECUTABLE_TARGETS=$(COMPRESSED_EXECUTABLES:%=bin/%)
 
 UPLOAD_CMD = github-release upload -u $(USER) -r $(EXECUTABLE) -t $(LAST_TAG) -n $(subst /,-,$(FILE)) -f bin/$(FILE)
 
+BUILD_ARGS = -ldflags "-X main.version=$(LAST_TAG)"
+
 all: $(EXECUTABLE)
 
 # arm
 bin/linux/arm/5/$(EXECUTABLE):
-	GOARM=5 GOARCH=arm GOOS=linux go build -o "$@"
+	GOARM=5 GOARCH=arm GOOS=linux go build -o "$@" $(BUILD_ARGS)
 bin/linux/arm/7/$(EXECUTABLE):
-	GOARM=7 GOARCH=arm GOOS=linux go build -o "$@"
+	GOARM=7 GOARCH=arm GOOS=linux go build -o "$@" $(BUILD_ARGS)
 
 # 386
 bin/darwin/386/$(EXECUTABLE):
-	GOARCH=386 GOOS=darwin go build -o "$@"
+	GOARCH=386 GOOS=darwin go build -o "$@" $(BUILD_ARGS)
 bin/linux/386/$(EXECUTABLE):
-	GOARCH=386 GOOS=linux go build -o "$@"
+	GOARCH=386 GOOS=linux go build -o "$@" $(BUILD_ARGS)
 bin/windows/386/$(EXECUTABLE):
-	GOARCH=386 GOOS=windows go build -o "$@"
+	GOARCH=386 GOOS=windows go build -o "$@" $(BUILD_ARGS)
 
 # amd64
 bin/freebsd/amd64/$(EXECUTABLE):
-	GOARCH=amd64 GOOS=freebsd go build -o "$@"
+	GOARCH=amd64 GOOS=freebsd go build -o "$@" $(BUILD_ARGS)
 bin/darwin/amd64/$(EXECUTABLE):
-	GOARCH=amd64 GOOS=darwin go build -o "$@"
+	GOARCH=amd64 GOOS=darwin go build -o "$@" $(BUILD_ARGS)
 bin/linux/amd64/$(EXECUTABLE):
-	GOARCH=amd64 GOOS=linux go build -o "$@"
+	GOARCH=amd64 GOOS=linux go build -o "$@" $(BUILD_ARGS)
 bin/windows/amd64/$(EXECUTABLE).exe:
-	GOARCH=amd64 GOOS=windows go build -o "$@"
+	GOARCH=amd64 GOOS=windows go build -o "$@" $(BUILD_ARGS)
 
 # compressed artifacts, makes a huge difference (Go executable is ~9MB,
 # after compressing ~2MB)
@@ -66,7 +68,7 @@ dep:
 	go mod vendor
 
 $(EXECUTABLE): dep
-	go build -o "$@"
+	go build -o "$@" $(BUILD_ARGS)
 
 install:
 	go install

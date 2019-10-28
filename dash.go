@@ -4,15 +4,16 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
+	"os"
 
 	inv "github.com/redhat-cop/dash/pkg/inventory"
 )
 
+var version = "undefined"
 var invPath string
 
 func init() {
-	flag.StringVar(&invPath, "i", "./", "Path to Inventory (relative or absolute); Defaults to ./")
+	flag.StringVar(&invPath, "i", "./", "Path to Inventory, relative or absolute")
 	flag.Parse()
 }
 
@@ -23,13 +24,17 @@ func main() {
 
 	yamlFile, err := ioutil.ReadFile(invPath + "dash.yaml")
 	if err != nil {
-		log.Printf("yamlFile.Get err   #%v ", err)
+		fmt.Printf("Error: Couldn't load dash inventory: %v\n\n", err)
+		flag.Usage()
+		os.Exit(1)
 	}
 
 	i.Load(yamlFile, invPath)
 	err = i.Process(&ns)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
+		flag.Usage()
+		os.Exit(1)
 	}
 
 }

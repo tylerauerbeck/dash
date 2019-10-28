@@ -1,7 +1,6 @@
 package inventory
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -13,6 +12,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// HelmChart manages pulling and processing of Helm charts
 type HelmChart struct {
 	Chart      string      `yaml:"chart"`
 	Url        string      `yaml:"url"`
@@ -20,6 +20,7 @@ type HelmChart struct {
 	ValueFiles []string    `yaml:"valueFiles"`
 }
 
+// Process runs `helm fetch` followed by `helm template`
 func (h *HelmChart) Process(ns *string, r *Resource) error {
 
 	// set values
@@ -35,7 +36,7 @@ func (h *HelmChart) Process(ns *string, r *Resource) error {
 	// validate chart name
 	chart := h.getName()
 	if chart == "" {
-		return errors.New(fmt.Sprintf("chart validation failed. Here's the chart: %s", chart))
+		return fmt.Errorf("chart validation failed. Here's the chart: %s", chart)
 	}
 
 	// fetch chart if from URL

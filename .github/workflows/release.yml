@@ -3,8 +3,10 @@ on:
   schedule:
     - cron: '*/5 * * * *'
 jobs:
-  releaser:
-    - name: Find crontab
-      run: export
-
-    
+  release:
+    name: Find crontab
+    runs-on: ubuntu-latest
+    steps:
+    - name: Testing Kube
+      run: |
+        export

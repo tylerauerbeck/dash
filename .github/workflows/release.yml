@@ -3,7 +3,8 @@ on:
   schedule:
     - cron: '*/5 * * * *'
 jobs:
-  - name: Find crontab
-    run: export
+  releaser:
+    - name: Find crontab
+      run: export
 
     

@@ -18,6 +18,8 @@ jobs:
       id: go
     - name: "Cut release"
       run: |
+        git config --local user.email "redhat-cop@github.com"
+        git config --local user.name "redhat-cop"
         echo "Creating release ${{ steps.rel_ver.outputs.version }}"
         git tag -a "v${{ steps.rel_ver.outputs.version}}" -m "release ${{ steps.rel_ver.outputs.version }}"
         make release

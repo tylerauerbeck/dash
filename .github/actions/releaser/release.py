@@ -23,7 +23,7 @@ job.setall(cron_sched)
 schedule = job.schedule(date_from=datetime.datetime.now())
 last_run = schedule.get_prev()
 
-print("Checking to see if there have been commits since " + last_run)
+print("Checking to see if there have been commits since " + str(last_run))
 
 # Hook into current repo and look at the git logs
 repo = git.Repo(WORKSPACE)

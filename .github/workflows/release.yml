@@ -22,6 +22,7 @@ jobs:
       run: |
         git config --local user.email "redhat-cop@github.com"
         git config --local user.name "redhat-cop"
+        export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
         echo "Creating release ${{ steps.rel_ver.outputs.version }}"
         git tag -a "v${{ steps.rel_ver.outputs.version}}" -m "release ${{ steps.rel_ver.outputs.version }}"
         make release

@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Check if release is required"
-      uses: ./.github/actions/releaser
+      uses: ../actions/releaser
     - name: "Check version"
       run: |
         echo $version

@@ -7,6 +7,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v1
     - name: "Check if release is required"
       uses: ./.github/actions/releaser 
     - name: "Check version"

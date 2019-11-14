@@ -24,6 +24,7 @@ jobs:
         git remote -v
         git --no-pager branch
         git rev-parse --abbrev-ref HEAD
+        git branch --create-reflog master origin/master
         git tag -a "v${{ steps.rel_ver.outputs.version}}" -m "release ${{ steps.rel_ver.outputs.version }}"
         make release
         

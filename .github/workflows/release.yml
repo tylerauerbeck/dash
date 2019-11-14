@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Prepare repository
+      run: git checkout "${GITHUB_REF:11}"
     - name: "Check if release is required"
       id: rel_ver
       uses: ./.github/actions/releaser 
@@ -21,10 +23,6 @@ jobs:
         git config --local user.email "redhat-cop@github.com"
         git config --local user.name "redhat-cop"
         echo "Creating release ${{ steps.rel_ver.outputs.version }}"
-        git remote -v
-        git --no-pager branch
-        git rev-parse --abbrev-ref HEAD
-        git branch --create-reflog master origin/master
         git tag -a "v${{ steps.rel_ver.outputs.version}}" -m "release ${{ steps.rel_ver.outputs.version }}"
         make release
         

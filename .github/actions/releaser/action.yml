@@ -1,0 +1,8 @@
+name: 'cron-releaser'
+description: 'Cut a patch release according to a cron schedule as long as there have been commits since the last run'
+outputs:
+  version:
+    description: 'The release tag used to create a new release'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

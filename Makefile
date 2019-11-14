@@ -1,6 +1,6 @@
 LAST_TAG := $(shell git describe --abbrev=0 --tags 2>/dev/null || git rev-parse --short HEAD)
 
-USER := redhat-cop
+USER := tylerauerbeck 
 EXECUTABLE := dash
 
 # only include the amd64 binaries, otherwise the github release will become

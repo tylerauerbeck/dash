@@ -1,0 +1,14 @@
+name: Weekly Release
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+jobs:
+  releaser:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Check if release is required"
+      uses: ../actions/releaser
+    - name: "Check version"
+      run: |
+        echo $version

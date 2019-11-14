@@ -9,7 +9,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: "Check if release is required"
+      id: rel_ver
       uses: ./.github/actions/releaser 
     - name: "Check version"
       run: |
-        echo $version
+        echo "${{ steps.rel_ver.outputs.version }}"

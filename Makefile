@@ -52,6 +52,9 @@ bin/windows/amd64/$(EXECUTABLE).exe:
 %.zip: %.exe
 	zip "$@" "$<"
 
+build: clean
+	$(MAKE) $(COMPRESSED_EXECUTABLE_TARGETS)
+
 # git tag -a v$(RELEASE) -m 'release $(RELEASE)'
 release: clean
 	$(MAKE) $(COMPRESSED_EXECUTABLE_TARGETS)

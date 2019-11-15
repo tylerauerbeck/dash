@@ -29,6 +29,8 @@ jobs:
     - name: Build Artifacts
       id: build
       run: |
+        pwd
+        ls
         make build
     - name: "Upload Artifacts (Darwin)"
       id: upload_artifacts_darwin

@@ -41,11 +41,10 @@ if len(logs) >= 1:
 
 # Increment the patch release by 1 and create the new release tag
   new_release = '.'.join(str(latest_release).split('.')[:-1]) + '.' + str(int(str(latest_release).split('.')[-1]) + 1)
-#  new_tag = repo.create_tag(new_release, message='release "{0}"'.format(new_release))
   print(new_release)
 
 # Run the release process
-#  os.system('cd $GITHUB_WORKSPACE && make release')
   os.system('echo ::set-output name=version::' + new_release)
 else:
   print("There have been no commits since the last release")
+  os.system('echo ::set-output name=version:: 0')

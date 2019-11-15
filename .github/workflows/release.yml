@@ -1,31 +1,72 @@
 name: Weekly Release
 on:
   schedule:
-    - cron: '*/59 * * * *'
+    - cron: '*/5 * * * *'
 jobs:
   releaser:
     name: Release
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Prepare repository
-      run: git checkout "${GITHUB_REF:11}"
     - name: "Check if release is required"
       id: rel_ver
-      uses: ./.github/actions/releaser 
+      uses: ./.github/actions/releaser
     - name: Set up Go 1.12
       uses: actions/setup-go@v1
       with:
         go-version: 1.12
       id: go
     - name: "Cut release"
+      id: create_release
+      uses: actions/create-release@v1.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.rel_ver.outputs.version }}
+        release_name: Release ${{ steps.rel_ver.outputs.version }}
+        draft: false
+        prerelease: true
+    - name: Build Artifacts
+      id: build
       run: |
-        git config --local user.email "redhat-cop@github.com"
-        git config --local user.name "redhat-cop"
-        export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-        echo $GITHUB_TOKEN
-        git remote -v
-        echo "Creating release ${{ steps.rel_ver.outputs.version }}"
-        git tag -a "v${{ steps.rel_ver.outputs.version}}" -m "release ${{ steps.rel_ver.outputs.version }}"
-        make release
-        
+        make build
+    - name: "Upload Artifacts (Darwin)"
+      id: upload_artifacts
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./bin/darwin/amd64/dash.bz2
+        asset_name: darwin-amd64-dash.bz2
+        asset_content_type: application/gzip
+    - name: "Upload Artifacts (FreeBSD)"
+      id: upload_artifacts
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./bin/freebsd/amd64/dash.bz2
+        asset_name: freebsd-amd64-dash.bz2
+        asset_content_type: application/gzip
+    - name: "Upload Artifacts (Linux)"
+      id: upload_artifacts
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./bin/linux/amd64/dash.bz2
+        asset_name: linux-amd64-dash.bz2
+        asset_content_type: application/gzip
+    - name: "Upload Artifacts (Windows)"
+      id: upload_artifacts
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./bin/windows/amd64/dash.zip
+        asset_name: windows-amd64-dash.zip
+        asset_content_type: application/zip

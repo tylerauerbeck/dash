@@ -31,7 +31,7 @@ jobs:
       run: |
         make build
     - name: "Upload Artifacts (Darwin)"
-      id: upload_artifacts
+      id: upload_artifacts_darwin
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -41,7 +41,7 @@ jobs:
         asset_name: darwin-amd64-dash.bz2
         asset_content_type: application/gzip
     - name: "Upload Artifacts (FreeBSD)"
-      id: upload_artifacts
+      id: upload_artifacts_freebsd
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -51,7 +51,7 @@ jobs:
         asset_name: freebsd-amd64-dash.bz2
         asset_content_type: application/gzip
     - name: "Upload Artifacts (Linux)"
-      id: upload_artifacts
+      id: upload_artifacts_linux
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
         asset_name: linux-amd64-dash.bz2
         asset_content_type: application/gzip
     - name: "Upload Artifacts (Windows)"
-      id: upload_artifacts
+      id: upload_artifacts_windows
       uses: actions/upload-release-asset@v1.0.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

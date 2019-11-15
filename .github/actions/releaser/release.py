@@ -37,7 +37,7 @@ if len(logs) >= 1:
   if len(repo.tags) == 0:
     latest_release = "v0.0.0"
   else:
-    latest_release = repo.tags[-1]
+    latest_release = repo.git.describe('--tags')
 
 # Increment the patch release by 1 and create the new release tag
   new_release = '.'.join(str(latest_release).split('.')[:-1]) + '.' + str(int(str(latest_release).split('.')[-1]) + 1)

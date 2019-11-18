@@ -34,17 +34,11 @@ if len(logs) >= 1:
   print("There have been commits since the last release. Creating a new release tag.")
 
 # Grab or calculate the current release tag
-  if len(repo.tags) == 0:
-    latest_release = "v0.0.0"
-  else:
-    latest_release = repo.git.describe('--tags')
-
-# Increment the patch release by 1 and create the new release tag
-  new_release = '.'.join(str(latest_release).split('.')[:-1]) + '.' + str(int(str(latest_release).split('.')[-1]) + 1)
-  print(new_release)
+  short_hash = repo.git.log('--oneline', '--pretty=format:%h')
+  print(short_hash)
 
 # Run the release process
-  os.system('echo ::set-output name=version::' + new_release)
+  os.system('echo ::set-output name=version::' + short_hash)
 else:
   print("There have been no commits since the last release")
-  os.system('echo ::set-output name=version:: 0')
+  os.system('echo ::set-output name=version:: null')

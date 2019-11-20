@@ -2,15 +2,13 @@ import datetime, croniter, json, os, git
 from crontab import CronTab
 
 # Grab Github Event Path and Workspace to get cron schedule and current repo
-#EVENT = os.getenv('GITHUB_EVENT_PATH')
+EVENT = os.getenv('GITHUB_EVENT_PATH')
 WORKSPACE = os.getenv('GITHUB_WORKSPACE')
 
 # Read in the event so we can parse the cron schedule
-#with open(EVENT) as ev:
-#  data = json.load(ev)
-#  cron_sched = data['schedule']
-
-cron_sched = '0 12 * * 5'
+with open(EVENT) as ev:
+  data = json.load(ev)
+  cron_sched = data['schedule']
 
 # Create an empty crontab
 cron = CronTab()
